@@ -1,5 +1,6 @@
 package co.spribe.testtask.service;
 
+import co.spribe.testtask.exception.IncorrectDateRangeException;
 import co.spribe.testtask.exception.UnitDoesNotExist;
 import co.spribe.testtask.exception.UnitIsNotAvailable;
 import co.spribe.testtask.model.entity.Booking;
@@ -22,6 +23,10 @@ public class BookingService {
 
     @Transactional
     public BookingResponse createBooking(BookingRequest request) {
+        if (request.checkOutDate().isBefore(request.checkInDate())) {
+            throw new IncorrectDateRangeException();
+        }
+
         // check here that unit exists
         var unit = unitRepository
                 .findById(request.unitId())
@@ -34,6 +39,7 @@ public class BookingService {
             var booking = new Booking();
             booking.setCheckInDate(request.checkInDate());
             booking.setCheckOutDate(request.checkOutDate());
+            // + 15% of booking system markup
             booking.setTotalCost(unit.getCost().multiply(new BigDecimal("1.15"))); // TODO: remove hard coded string from here
             booking.setUnit(unit);
 

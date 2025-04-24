@@ -1,0 +1,18 @@
+package co.spribe.testtask.model.request;
+
+import co.spribe.testtask.model.entity.AccomodationType;
+import lombok.Data;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+@Data
+public class UnitSearchRequest {
+    private LocalDate checkInDate;
+    private LocalDate checkOutDate;
+    private Integer numberOfFloors;
+    private Integer floor;
+    private BigDecimal cost;
+    private String description;
+    private AccomodationType accomodationType;
+}

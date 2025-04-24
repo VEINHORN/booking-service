@@ -29,7 +29,7 @@ public class Unit {
     private Integer floor;
 
     @Column(name = "cost")
-    private BigDecimal cost; // + 15% of booking system markup
+    private BigDecimal cost;
 
     @Column(name = "description")
     private String description;

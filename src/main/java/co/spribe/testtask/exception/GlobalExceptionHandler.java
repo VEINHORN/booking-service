@@ -16,5 +16,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
     }
 
+    @ExceptionHandler(IncorrectDateRangeException.class)
+    public ResponseEntity<ErrorResponse> handleIncorrectDateRangeException(IncorrectDateRangeException e) {
+        return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+    }
+
     public record ErrorResponse(String message) {}
 }

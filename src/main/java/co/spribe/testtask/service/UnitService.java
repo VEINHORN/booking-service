@@ -1,12 +1,16 @@
 package co.spribe.testtask.service;
 
+import co.spribe.testtask.exception.IncorrectDateRangeException;
 import co.spribe.testtask.model.entity.Unit;
 import co.spribe.testtask.model.request.UnitRequest;
+import co.spribe.testtask.model.request.UnitSearchRequest;
 import co.spribe.testtask.model.response.UnitResponse;
 import co.spribe.testtask.repository.UnitRepository;
+import co.spribe.testtask.repository.UnitSpecifications;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -16,10 +20,21 @@ import java.time.LocalDate;
 public class UnitService {
     private final UnitRepository unitRepository;
 
-    public Page<UnitResponse> getAllUnits(Pageable pageable) {
+    public Page<UnitResponse> searchUnits(UnitSearchRequest request, Pageable pageable) {
+        if (request.getCheckOutDate().isBefore(request.getCheckInDate())) {
+            throw new IncorrectDateRangeException();
+        }
+
+        var spec = Specification.where(
+                UnitSpecifications.hasNumberOfRooms(request.getNumberOfFloors())
+                        .and(UnitSpecifications.hasCost(request.getCost()))
+                        .and(UnitSpecifications.likeDescription(request.getDescription()))
+                        .and(UnitSpecifications.hasAccomodationType(request.getAccomodationType()))
+        );
+
         return unitRepository
-                .findAll(pageable)
-                .map(unit -> convert(unit, null, null));
+                .findAll(spec, pageable)
+                .map(unit -> toUnitResponse(unit, request.getCheckInDate(), request.getCheckOutDate()));
     }
 
     public void createUnit(UnitRequest request) {
@@ -42,7 +57,7 @@ public class UnitService {
                 });
     }
 
-    private UnitResponse convert(Unit unit, LocalDate checkInDate, LocalDate checkOutDate) {
+    private UnitResponse toUnitResponse(Unit unit, LocalDate checkInDate, LocalDate checkOutDate) {
         return new UnitResponse(
                 unit.getId(),
                 unit.getNumberOfRooms(),
