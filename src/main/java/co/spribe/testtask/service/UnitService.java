@@ -34,9 +34,8 @@ public class UnitService {
     }
 
     public boolean isUnitAvailable(Unit unit, LocalDate checkInDate, LocalDate checkOutDate) {
-        var allUnitBookings = unit.getBookings();
-
-        return allUnitBookings
+        return unit
+                .getBookings()
                 .stream()
                 .allMatch(booking -> {
                     return checkOutDate.isBefore(booking.getCheckInDate()) || booking.getCheckOutDate().isBefore(checkInDate);
