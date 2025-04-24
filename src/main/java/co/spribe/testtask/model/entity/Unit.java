@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -31,4 +33,7 @@ public class Unit {
 
     @Column(name = "description")
     private String description;
+
+    @OneToMany(mappedBy = "unit")
+    private List<Booking> bookings = new ArrayList<>();
 }

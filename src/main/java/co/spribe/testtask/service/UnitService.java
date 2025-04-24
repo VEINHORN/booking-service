@@ -9,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 @Service
 @RequiredArgsConstructor
 public class UnitService {
@@ -17,7 +19,7 @@ public class UnitService {
     public Page<UnitResponse> getAllUnits(Pageable pageable) {
         return unitRepository
                 .findAll(pageable)
-                .map(this::convert);
+                .map(unit -> convert(unit, null, null));
     }
 
     public void createUnit(UnitRequest request) {
@@ -31,9 +33,17 @@ public class UnitService {
         unitRepository.save(newUnit);
     }
 
-    private UnitResponse convert(Unit unit) {
-        boolean isUnitAvailable = true;
+    public boolean isUnitAvailable(Unit unit, LocalDate checkInDate, LocalDate checkOutDate) {
+        var allUnitBookings = unit.getBookings();
 
+        return allUnitBookings
+                .stream()
+                .allMatch(booking -> {
+                    return checkOutDate.isBefore(booking.getCheckInDate()) || booking.getCheckOutDate().isBefore(checkInDate);
+                });
+    }
+
+    private UnitResponse convert(Unit unit, LocalDate checkInDate, LocalDate checkOutDate) {
         return new UnitResponse(
                 unit.getId(),
                 unit.getNumberOfRooms(),
@@ -41,7 +51,7 @@ public class UnitService {
                 unit.getDescription(),
                 unit.getAccomodationType(),
                 unit.getCost(),
-                isUnitAvailable
+                checkInDate == null || checkOutDate == null || isUnitAvailable(unit, checkInDate, checkOutDate)
         );
     }
 }

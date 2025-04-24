@@ -7,10 +7,10 @@ import java.util.UUID;
 
 public record UnitResponse(
         UUID id,
-        int numberOfFloors,
-        int floor,
+        Integer numberOfFloors,
+        Integer floor,
         String description,
         AccomodationType accomodationType,
         BigDecimal cost,
-        boolean available) {
+        Boolean available) {
 }
