@@ -26,4 +26,8 @@ public class Booking {
 
     @Column(name = "total_cost")
     private BigDecimal totalCost;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private BookingStatus status;
 }

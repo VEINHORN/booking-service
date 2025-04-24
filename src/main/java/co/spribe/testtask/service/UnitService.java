@@ -1,6 +1,7 @@
 package co.spribe.testtask.service;
 
 import co.spribe.testtask.exception.IncorrectDateRangeException;
+import co.spribe.testtask.model.entity.BookingStatus;
 import co.spribe.testtask.model.entity.Unit;
 import co.spribe.testtask.model.request.UnitRequest;
 import co.spribe.testtask.model.request.UnitSearchRequest;
@@ -11,7 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -37,6 +40,7 @@ public class UnitService {
                 .map(unit -> toUnitResponse(unit, request.getCheckInDate(), request.getCheckOutDate()));
     }
 
+    @Transactional
     public void createUnit(UnitRequest request) {
         var newUnit = new Unit();
         newUnit.setNumberOfRooms(request.numberOfRooms());
@@ -52,12 +56,13 @@ public class UnitService {
         return unit
                 .getBookings()
                 .stream()
+                .filter(booking -> !booking.getStatus().equals(BookingStatus.CANCELED))
                 .allMatch(booking -> {
                     return checkOutDate.isBefore(booking.getCheckInDate()) || booking.getCheckOutDate().isBefore(checkInDate);
                 });
     }
 
-    private UnitResponse toUnitResponse(Unit unit, LocalDate checkInDate, LocalDate checkOutDate) {
+    private UnitResponse toUnitResponse(Unit unit, @NonNull LocalDate checkInDate, @NonNull LocalDate checkOutDate) {
         return new UnitResponse(
                 unit.getId(),
                 unit.getNumberOfRooms(),
@@ -65,7 +70,7 @@ public class UnitService {
                 unit.getDescription(),
                 unit.getAccomodationType(),
                 unit.getCost(),
-                checkInDate == null || checkOutDate == null || isUnitAvailable(unit, checkInDate, checkOutDate)
+                isUnitAvailable(unit, checkInDate, checkOutDate)
         );
     }
 }

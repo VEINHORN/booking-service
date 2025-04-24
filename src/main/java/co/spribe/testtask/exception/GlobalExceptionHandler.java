@@ -6,13 +6,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(UnitDoesNotExist.class)
-    public ResponseEntity<ErrorResponse> handleUnitDoesNotExistException(UnitDoesNotExist e) {
+    @ExceptionHandler(UnitNotExistException.class)
+    public ResponseEntity<ErrorResponse> handleUnitDoesNotExistException(UnitNotExistException e) {
         return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
     }
 
-    @ExceptionHandler(UnitIsNotAvailable.class)
-    public ResponseEntity<ErrorResponse> handleUnitIsNotAvailableException(UnitIsNotAvailable e) {
+    @ExceptionHandler(UnitIsNotAvailableException.class)
+    public ResponseEntity<ErrorResponse> handleUnitIsNotAvailableException(UnitIsNotAvailableException e) {
         return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
     }
 
