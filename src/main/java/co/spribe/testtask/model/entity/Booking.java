@@ -3,7 +3,6 @@ package co.spribe.testtask.model.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -24,9 +23,6 @@ public class Booking {
 
     @ManyToOne
     private Unit unit;
-
-    @Column(name = "total_cost")
-    private BigDecimal totalCost;
 
     @Column(name = "cancelled")
     private Boolean cancelled;

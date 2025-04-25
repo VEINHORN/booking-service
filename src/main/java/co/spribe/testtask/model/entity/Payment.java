@@ -3,6 +3,7 @@ package co.spribe.testtask.model.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -23,4 +24,7 @@ public class Payment {
 
     @ManyToOne
     private Booking booking;
+
+    @Column(name = "amount")
+    private BigDecimal amount;
 }

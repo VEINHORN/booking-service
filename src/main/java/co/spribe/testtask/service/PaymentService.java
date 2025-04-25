@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -26,6 +27,7 @@ public class PaymentService {
         payment.setStatus(PaymentStatus.PENDING);
         payment.setBooking(booking);
         payment.setCreatedAt(LocalDateTime.now());
+        payment.setAmount(payment.getBooking().getUnit().getCost().multiply(new BigDecimal("1.15")));
 
         paymentRepository.save(payment);
     }

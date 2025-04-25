@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @Slf4j
@@ -59,8 +58,6 @@ public class BookingService {
         var newBooking = new Booking();
         newBooking.setCheckInDate(request.checkInDate());
         newBooking.setCheckOutDate(request.checkOutDate());
-        // + 15% of newBooking system markup
-        newBooking.setTotalCost(unit.getCost().multiply(new BigDecimal("1.15"))); // TODO: remove hard coded string from here
         newBooking.setUnit(unit);
         newBooking.setCancelled(false);
         newBooking.setUser(user);
