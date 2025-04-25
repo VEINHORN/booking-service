@@ -1,6 +1,7 @@
 package co.spribe.testtask.controller;
 
 import co.spribe.testtask.service.PaymentService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,8 +16,8 @@ import java.util.UUID;
 public class PaymentController {
     private final PaymentService paymentService;
 
-    // Web Hook endpoint for simulating accepting payments
     @PostMapping("/{id}")
+    @Operation(summary = "Endpoint to simulate accepting payments")
     public void acceptPayment(@PathVariable UUID id) {
         paymentService.acceptPayment(id);
     }

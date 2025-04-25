@@ -7,6 +7,7 @@ import co.spribe.testtask.model.response.AvailableUnitResponse;
 import co.spribe.testtask.model.response.UnitResponse;
 import co.spribe.testtask.service.StatsService;
 import co.spribe.testtask.service.UnitService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ public class UnitController {
     private final StatsService statsService;
 
     @GetMapping
+    @Operation(summary = "Shows units with filtering capabilities")
     public Iterable<UnitResponse> searchUnits(
             @RequestParam LocalDate checkInDate,
             @RequestParam LocalDate checkOutDate,
@@ -44,11 +46,13 @@ public class UnitController {
     }
 
     @GetMapping("/available")
+    @Operation(summary = "Shows stats about available units")
     public AvailableUnitResponse getAvailableUnitsStats() {
         return statsService.getAvailableUnits();
     }
 
     @PostMapping
+    @Operation(summary = "Creates a new unit")
     public void createUnit(@RequestBody UnitRequest request) {
         unitService.createUnit(request);
     }

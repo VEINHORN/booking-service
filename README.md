@@ -1,3 +1,7 @@
 # spribe-test-task
 
-A test task given by Spribe company for Senior Software Developer position
+Booking system application which provides their users to book available units.
+
+## API Documentation
+
+http://localhost:8080/swagger-ui.html
