@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -27,7 +28,9 @@ public class Booking {
     @Column(name = "total_cost")
     private BigDecimal totalCost;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private BookingStatus status;
+    @Column(name = "cancelled")
+    private Boolean cancelled;
+
+    @OneToMany(mappedBy = "booking")
+    private List<Payment> payments;
 }
