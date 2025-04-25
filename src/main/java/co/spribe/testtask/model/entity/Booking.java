@@ -24,8 +24,9 @@ public class Booking {
     @ManyToOne
     private Unit unit;
 
-    @Column(name = "cancelled")
-    private Boolean cancelled;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private BookingStatus status;
 
     @OneToMany(mappedBy = "booking")
     private List<Payment> payments;

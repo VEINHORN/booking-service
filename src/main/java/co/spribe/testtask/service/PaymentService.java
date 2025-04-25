@@ -2,9 +2,7 @@ package co.spribe.testtask.service;
 
 import co.spribe.testtask.exception.PaymentCannotBeProcessed;
 import co.spribe.testtask.exception.ResourceNotFoundException;
-import co.spribe.testtask.model.entity.Booking;
-import co.spribe.testtask.model.entity.Payment;
-import co.spribe.testtask.model.entity.PaymentStatus;
+import co.spribe.testtask.model.entity.*;
 import co.spribe.testtask.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +18,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PaymentService {
     private final PaymentRepository paymentRepository;
+    private final EventService eventService;
 
     @Transactional
     public void processPayment(Booking booking) {
@@ -38,7 +37,9 @@ public class PaymentService {
                 .findById(paymentId)
                 .ifPresentOrElse(payment -> {
                     if (PaymentStatus.PENDING.equals(payment.getStatus())) {
+                        payment.getBooking().setStatus(BookingStatus.CONFIRMED);
                         payment.setStatus(PaymentStatus.PAID);
+                        eventService.storeEvent(EventType.BOOKING_CONFIRMED, payment.getBooking(), payment.getBooking().getUser());
                         log.info("Payment {} has been successfully accepted for {} booking", payment.getId(), payment.getBooking().getId());
                     } else {
                         throw new PaymentCannotBeProcessed(payment.getId(), payment.getStatus());

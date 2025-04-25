@@ -1,6 +1,8 @@
 package co.spribe.testtask.service;
 
 import co.spribe.testtask.model.entity.Booking;
+import co.spribe.testtask.model.entity.BookingStatus;
+import co.spribe.testtask.model.entity.EventType;
 import co.spribe.testtask.model.entity.PaymentStatus;
 import co.spribe.testtask.repository.BookingRepository;
 import co.spribe.testtask.repository.PaymentRepository;
@@ -20,6 +22,7 @@ public class BookingAutoCanceller {
     private final TaskScheduler taskScheduler;
     private final BookingRepository bookingRepository;
     private final PaymentRepository paymentRepository;
+    private final EventService eventService;
 
     @Transactional
     public void schedulePaymentCheck(Booking booking) {
@@ -27,10 +30,11 @@ public class BookingAutoCanceller {
             paymentRepository
                     .findFirstByBookingIdAndStatusOrderByCreatedAtDesc(booking.getId(), PaymentStatus.PENDING)
                     .ifPresent(payment -> {
-                        booking.setCancelled(true);
-                        payment.setStatus(PaymentStatus.CANCELED);
+                        booking.setStatus(BookingStatus.EXPIRED);
+                        payment.setStatus(PaymentStatus.EXPIRED);
                         bookingRepository.save(booking);
                         paymentRepository.save(payment);
+                        eventService.storeEvent(EventType.BOOKING_EXPIRED, booking, booking.getUser());
                         log.info("Didn't receive payment for {} booking, so it has been canceled", booking.getId());
                     });
         }, Instant.now().plus(Duration.ofMinutes(15)));

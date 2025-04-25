@@ -1,10 +1,7 @@
 package co.spribe.testtask.service;
 
 import co.spribe.testtask.exception.*;
-import co.spribe.testtask.model.entity.Booking;
-import co.spribe.testtask.model.entity.PaymentStatus;
-import co.spribe.testtask.model.entity.Unit;
-import co.spribe.testtask.model.entity.User;
+import co.spribe.testtask.model.entity.*;
 import co.spribe.testtask.model.request.BookingRequest;
 import co.spribe.testtask.model.response.BookingResponse;
 import co.spribe.testtask.repository.BookingRepository;
@@ -27,6 +24,7 @@ public class BookingService {
     private final PaymentService paymentService;
     private final BookingAutoCanceller bookingAutoCanceller;
     private final UserRepository userRepository;
+    private final EventService eventService;
 
     @Transactional
     public BookingResponse createBooking(BookingRequest request) {
@@ -45,8 +43,10 @@ public class BookingService {
 
         if (isUnitAvailable) {
             var newBooking = bookingRepository.save(createBooking(request, unit, user));
+
             paymentService.processPayment(newBooking);
             bookingAutoCanceller.schedulePaymentCheck(newBooking);
+            eventService.storeEvent(EventType.BOOKING_CREATED, newBooking, user);
 
             return new BookingResponse(newBooking.getId());
         } else {
@@ -59,7 +59,7 @@ public class BookingService {
         newBooking.setCheckInDate(request.checkInDate());
         newBooking.setCheckOutDate(request.checkOutDate());
         newBooking.setUnit(unit);
-        newBooking.setCancelled(false);
+        newBooking.setStatus(BookingStatus.CREATED);
         newBooking.setUser(user);
 
         return newBooking;
@@ -71,12 +71,13 @@ public class BookingService {
                 .findById(id)
                 .ifPresentOrElse(
                         booking -> {
-                            booking.setCancelled(true);
+                            booking.setStatus(BookingStatus.CANCELED);
+                            eventService.storeEvent(EventType.BOOKING_CANCELLED, booking, booking.getUser());
                             booking
                                     .getPayments()
                                     .stream()
                                     .filter(payment -> PaymentStatus.PENDING.equals(payment.getStatus()))
-                                    .forEach(payment -> payment.setStatus(PaymentStatus.CANCELED));
+                                    .forEach(payment -> payment.setStatus(PaymentStatus.EXPIRED));
                         },
                         () -> { throw new BookingNotExistException(); }
                 );

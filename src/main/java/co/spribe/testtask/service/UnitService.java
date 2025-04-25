@@ -2,6 +2,7 @@ package co.spribe.testtask.service;
 
 import co.spribe.testtask.exception.IncorrectDateRangeException;
 import co.spribe.testtask.exception.ResourceNotFoundException;
+import co.spribe.testtask.model.entity.BookingStatus;
 import co.spribe.testtask.model.entity.Unit;
 import co.spribe.testtask.model.request.UnitRequest;
 import co.spribe.testtask.model.request.UnitSearchRequest;
@@ -65,7 +66,7 @@ public class UnitService {
         return unit
                 .getBookings()
                 .stream()
-                .filter(booking -> !booking.getCancelled())
+                .filter(booking -> !BookingStatus.CANCELED.equals(booking.getStatus()))
                 .allMatch(booking -> {
                     return checkOutDate.isBefore(booking.getCheckInDate()) || booking.getCheckOutDate().isBefore(checkInDate);
                 });
