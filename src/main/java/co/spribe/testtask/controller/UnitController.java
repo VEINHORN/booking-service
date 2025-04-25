@@ -3,7 +3,9 @@ package co.spribe.testtask.controller;
 import co.spribe.testtask.model.entity.AccomodationType;
 import co.spribe.testtask.model.request.UnitRequest;
 import co.spribe.testtask.model.request.UnitSearchRequest;
+import co.spribe.testtask.model.response.AvailableUnitResponse;
 import co.spribe.testtask.model.response.UnitResponse;
+import co.spribe.testtask.service.StatsService;
 import co.spribe.testtask.service.UnitService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +19,7 @@ import java.time.LocalDate;
 @RequestMapping("/units")
 public class UnitController {
     private final UnitService unitService;
+    private final StatsService statsService;
 
     @GetMapping
     public Iterable<UnitResponse> searchUnits(
@@ -38,6 +41,11 @@ public class UnitController {
         searchRequest.setAccomodationType(accomodationType);
 
         return unitService.searchUnits(searchRequest, pageable);
+    }
+
+    @GetMapping("/available")
+    public AvailableUnitResponse getAvailableUnitsStats() {
+        return statsService.getAvailableUnits();
     }
 
     @PostMapping

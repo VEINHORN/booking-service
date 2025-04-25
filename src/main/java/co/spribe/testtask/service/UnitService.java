@@ -24,6 +24,7 @@ import java.time.LocalDate;
 public class UnitService {
     private final UserRepository userRepository;
     private final UnitRepository unitRepository;
+    private final StatsService statsService;
 
     public Page<UnitResponse> searchUnits(UnitSearchRequest request, Pageable pageable) {
         if (request.getCheckOutDate().isBefore(request.getCheckInDate())) {
@@ -57,6 +58,7 @@ public class UnitService {
         newUnit.setUser(user);
 
         unitRepository.save(newUnit);
+        statsService.incrementAvailableUnits();
     }
 
     public boolean isUnitAvailable(Unit unit, LocalDate checkInDate, LocalDate checkOutDate) {
