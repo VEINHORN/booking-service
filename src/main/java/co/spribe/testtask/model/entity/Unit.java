@@ -36,4 +36,7 @@ public class Unit {
 
     @OneToMany(mappedBy = "unit")
     private List<Booking> bookings = new ArrayList<>();
+
+    @OneToOne
+    private User user;
 }

@@ -1,12 +1,14 @@
 package co.spribe.testtask.service;
 
 import co.spribe.testtask.exception.IncorrectDateRangeException;
+import co.spribe.testtask.exception.ResourceNotFoundException;
 import co.spribe.testtask.model.entity.Unit;
 import co.spribe.testtask.model.request.UnitRequest;
 import co.spribe.testtask.model.request.UnitSearchRequest;
 import co.spribe.testtask.model.response.UnitResponse;
 import co.spribe.testtask.repository.UnitRepository;
 import co.spribe.testtask.repository.UnitSpecifications;
+import co.spribe.testtask.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +22,7 @@ import java.time.LocalDate;
 @Service
 @RequiredArgsConstructor
 public class UnitService {
+    private final UserRepository userRepository;
     private final UnitRepository unitRepository;
 
     public Page<UnitResponse> searchUnits(UnitSearchRequest request, Pageable pageable) {
@@ -41,12 +44,17 @@ public class UnitService {
 
     @Transactional
     public void createUnit(UnitRequest request) {
+        var user = userRepository
+                .findById(request.userId())
+                .orElseThrow(() -> new ResourceNotFoundException("User %s not found".formatted(request.userId())));
+
         var newUnit = new Unit();
         newUnit.setNumberOfRooms(request.numberOfRooms());
         newUnit.setFloor(request.floor());
         newUnit.setDescription(request.description());
         newUnit.setAccomodationType(request.accomodationType());
         newUnit.setCost(request.cost());
+        newUnit.setUser(user);
 
         unitRepository.save(newUnit);
     }

@@ -4,10 +4,12 @@ import co.spribe.testtask.exception.*;
 import co.spribe.testtask.model.entity.Booking;
 import co.spribe.testtask.model.entity.PaymentStatus;
 import co.spribe.testtask.model.entity.Unit;
+import co.spribe.testtask.model.entity.User;
 import co.spribe.testtask.model.request.BookingRequest;
 import co.spribe.testtask.model.response.BookingResponse;
 import co.spribe.testtask.repository.BookingRepository;
 import co.spribe.testtask.repository.UnitRepository;
+import co.spribe.testtask.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,7 @@ public class BookingService {
     private final BookingRepository bookingRepository;
     private final PaymentService paymentService;
     private final BookingAutoCanceller bookingAutoCanceller;
+    private final UserRepository userRepository;
 
     @Transactional
     public BookingResponse createBooking(BookingRequest request) {
@@ -35,11 +38,14 @@ public class BookingService {
         var unit = unitRepository
                 .findById(request.unitId())
                 .orElseThrow(() -> new UnitNotExistException(request.unitId()));
+        var user = userRepository
+                .findById(request.userId())
+                .orElseThrow(() -> new ResourceNotFoundException("User %s not found".formatted(request.userId())));
 
         var isUnitAvailable = unitService.isUnitAvailable(unit, request.checkInDate(), request.checkOutDate());
 
         if (isUnitAvailable) {
-            var newBooking = bookingRepository.save(createBooking(request, unit));
+            var newBooking = bookingRepository.save(createBooking(request, unit, user));
             paymentService.processPayment(newBooking);
             bookingAutoCanceller.schedulePaymentCheck(newBooking);
 
@@ -49,7 +55,7 @@ public class BookingService {
         }
     }
 
-    private Booking createBooking(BookingRequest request, Unit unit) {
+    private Booking createBooking(BookingRequest request, Unit unit, User user) {
         var newBooking = new Booking();
         newBooking.setCheckInDate(request.checkInDate());
         newBooking.setCheckOutDate(request.checkOutDate());
@@ -57,6 +63,7 @@ public class BookingService {
         newBooking.setTotalCost(unit.getCost().multiply(new BigDecimal("1.15"))); // TODO: remove hard coded string from here
         newBooking.setUnit(unit);
         newBooking.setCancelled(false);
+        newBooking.setUser(user);
 
         return newBooking;
     }

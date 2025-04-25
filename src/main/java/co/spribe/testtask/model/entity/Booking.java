@@ -33,4 +33,7 @@ public class Booking {
 
     @OneToMany(mappedBy = "booking")
     private List<Payment> payments;
+
+    @OneToOne
+    private User user;
 }
