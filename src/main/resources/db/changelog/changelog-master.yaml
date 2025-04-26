@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001
+      author: veinhorn
+      changes:
+        - sqlFile:
+            path: 001-init-schema.sql
+            relativeToChangelogFile: true
+  - changeSet:
+      id: 002
+      author: veinhorn
+      changes:
+        - sqlFile:
+            path: 002-add-data.sql
+            relativeToChangelogFile: true
