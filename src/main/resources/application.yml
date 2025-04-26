@@ -4,7 +4,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   datasource:
-    url: "jdbc:postgresql://localhost:5432/booking-system2"
+    url: "jdbc:postgresql://localhost:5432/booking-system"
     username: veinhorn
     password: root
   liquibase:
