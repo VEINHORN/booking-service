@@ -32,16 +32,17 @@ public class UnitService {
             throw new IncorrectDateRangeException();
         }
 
-        var spec = Specification.where(
-                UnitSpecifications.hasNumberOfRooms(request.getNumberOfFloors())
-                        .and(UnitSpecifications.hasCost(request.getCost()))
-                        .and(UnitSpecifications.likeDescription(request.getDescription()))
-                        .and(UnitSpecifications.hasAccomodationType(request.getAccomodationType()))
-        );
-
         return unitRepository
-                .findAll(spec, pageable)
+                .findAll(createSpecification(request), pageable)
                 .map(unit -> toUnitResponse(unit, request.getCheckInDate(), request.getCheckOutDate()));
+    }
+
+    private Specification<Unit> createSpecification(UnitSearchRequest request) {
+        return UnitSpecifications
+                .hasNumberOfRooms(request.getNumberOfFloors())
+                .and(UnitSpecifications.hasCost(request.getCost()))
+                .and(UnitSpecifications.likeDescription(request.getDescription()))
+                .and(UnitSpecifications.hasAccomodationType(request.getAccomodationType()));
     }
 
     @Transactional
