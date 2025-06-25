@@ -1,6 +1,5 @@
 package com.veinhorn.booking.service.controller;
 
-import com.veinhorn.booking.service.controller.UnitController;
 import com.veinhorn.booking.service.model.entity.AccomodationType;
 import com.veinhorn.booking.service.model.request.UnitRequest;
 import com.veinhorn.booking.service.model.response.AvailableUnitResponse;

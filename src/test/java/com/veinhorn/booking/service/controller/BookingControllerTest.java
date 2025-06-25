@@ -1,6 +1,5 @@
 package com.veinhorn.booking.service.controller;
 
-import com.veinhorn.booking.service.controller.BookingController;
 import com.veinhorn.booking.service.model.request.BookingRequest;
 import com.veinhorn.booking.service.model.response.BookingResponse;
 import com.veinhorn.booking.service.service.BookingService;

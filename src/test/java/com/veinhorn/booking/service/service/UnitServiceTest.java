@@ -8,8 +8,6 @@ import com.veinhorn.booking.service.model.request.UnitRequest;
 import com.veinhorn.booking.service.model.request.UnitSearchRequest;
 import com.veinhorn.booking.service.repository.UnitRepository;
 import com.veinhorn.booking.service.repository.UserRepository;
-import com.veinhorn.booking.service.service.StatsService;
-import com.veinhorn.booking.service.service.UnitService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
