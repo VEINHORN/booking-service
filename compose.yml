@@ -11,7 +11,7 @@ services:
       POSTGRES_PASSWORD: root
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    restart: always
+    restart: no
 
 volumes:
   postgres_data:
