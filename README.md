@@ -1,6 +1,6 @@
-# spribe-test-task
+# booking-service
 
-Booking system application which provides their users to book available units.
+Booking service which provides their users capability to book available units.
 
 ## Run 
 
