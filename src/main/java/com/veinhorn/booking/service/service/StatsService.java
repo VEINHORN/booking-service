@@ -2,6 +2,7 @@ package com.veinhorn.booking.service.service;
 
 import com.veinhorn.booking.service.model.response.AvailableUnitResponse;
 import com.veinhorn.booking.service.repository.UnitRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -9,16 +10,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
+@RequiredArgsConstructor
 public class StatsService {
     private static final int AVAILABLE_UNITS_KEY = 0;
 
-    private final Map<Integer, AtomicLong> stats;
-    private UnitRepository unitRepository;
-
-    public StatsService(UnitRepository unitRepository) {
-        stats = new ConcurrentHashMap<>();
-        this.unitRepository = unitRepository;
-    }
+    private final Map<Integer, AtomicLong> stats = new ConcurrentHashMap<>();
+    private final UnitRepository unitRepository;
 
     public void incrementAvailableUnits() {
         stats.compute(AVAILABLE_UNITS_KEY, (key, value) -> {
