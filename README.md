@@ -2,9 +2,9 @@
 
 Booking service which provides their users capability to book available units.
 
-## Run 
+## Run
 
-To start PostgreSQL database:
+In order to run the service, first start PostgreSQL database using Docker Compose:
 
 ```shell
 docker compose up -d
