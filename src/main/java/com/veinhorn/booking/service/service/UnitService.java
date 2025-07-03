@@ -11,6 +11,9 @@ import com.veinhorn.booking.service.repository.UnitRepository;
 import com.veinhorn.booking.service.repository.UnitSpecifications;
 import com.veinhorn.booking.service.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -20,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UnitService {
@@ -27,7 +31,10 @@ public class UnitService {
     private final UnitRepository unitRepository;
     private final StatsService statsService;
 
+    @Cacheable(value = "units")
     public Page<UnitResponse> searchUnits(UnitSearchRequest request, Pageable pageable) {
+        log.debug("Cache miss: querying unitService");
+
         if (request.getCheckOutDate().isBefore(request.getCheckInDate())) {
             throw new IncorrectDateRangeException();
         }
@@ -46,6 +53,7 @@ public class UnitService {
     }
 
     @Transactional
+    @CacheEvict(value = "units", allEntries = true)
     public void createUnit(UnitRequest request) {
         var user = userRepository
                 .findById(request.userId())

@@ -12,4 +12,4 @@ docker compose up -d
 
 ## API Documentation
 
-http://localhost:8080/swagger-ui.html
+The Swagger API documentation can be found by [this link](http://localhost:8080/swagger-ui.html).
